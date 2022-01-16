@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bybing.mapper.HistoryMapper">
+
+    <update id="updateHistory" parameterType="History">
+        update
+        history
+        set
+        confirm=#{confirm},
+        confirm_add=#{confirmAdd},
+        suspect_add=#{suspectAdd},
+        suspect=#{suspect},
+        heal=#{heal},
+        heal_add=#{healAdd},
+        dead=#{dead},
+        dead_add=#{deadAdd}
+        where
+        ds=#{ds};
+    </update>
+
+</mapper>
