@@ -4,6 +4,7 @@ package cn.bybing.controller;
 import cn.bybing.api.ApiResult;
 import cn.bybing.entity.Chinatotal;
 import cn.bybing.entity.Details;
+import cn.bybing.mapper.ChinatotalMapper;
 import cn.bybing.service.ChinatotalService;
 import cn.bybing.task.TotalTask;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -33,12 +34,17 @@ public class ChinatotalController {
     private TotalTask totalTask;
 
     @Resource
-    private ChinatotalService chinatotalServicel;
+    private ChinatotalService chinatotalService;
+
+    @Resource
+    private ChinatotalMapper chinatotalMapper;
 
     @GetMapping("/all")
     public ApiResult<Map<String, Object>> getAll(){
+        Map<String, Chinatotal> all = totalTask.getAll();
+        chinatotalService.saveChinatotal(all.get("chinaTotal"));
         Map<String, Object> map = new HashMap<>();
-        List<Chinatotal> list = chinatotalServicel.list(new LambdaQueryWrapper<Chinatotal>().orderByDesc(Chinatotal::getUpdatetime));
+        List<Chinatotal> list = chinatotalService.list(new LambdaQueryWrapper<Chinatotal>().orderByDesc(Chinatotal::getUpdatetime));
         map.put("updateTime",totalTask.getUpdateTime());
         map.put("info",list);
         return ApiResult.success(map);

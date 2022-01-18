@@ -31,9 +31,6 @@ import java.util.UUID;
 @Service
 public class DetailsServiceImpl extends ServiceImpl<DetailsMapper, Details> implements DetailsService {
 
-    @Resource
-    private DetailsTask detailsTask;
-
 
     public void saveDetails(Details details){
         HashMap<String, Object> map = new HashMap<>();

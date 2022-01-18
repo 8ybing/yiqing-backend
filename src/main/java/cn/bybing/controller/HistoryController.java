@@ -38,10 +38,23 @@ public class HistoryController {
 
     @GetMapping("/all")
     public ApiResult<Map<String, Object>> getInfo(){
+        updateHistoryData();
         Map<String, Object> map = new HashMap<>();
         List<History> list = historyService.list(new LambdaQueryWrapper<History>().orderByDesc(History::getDs));
         map.put("date",historyTask.getUpdateTime());
         map.put("info",list);
         return ApiResult.success(map);
+    }
+
+    /*
+    更新历史数据
+     */
+    private void updateHistoryData(){
+        Map<String,History> allHistory = historyTask.getHistory();
+        for(Map.Entry<String,History> entry:allHistory.entrySet()){
+            String key = entry.getKey();
+            History history = allHistory.get(key);
+            this.historyService.saveHistory(history);
+        }
     }
 }

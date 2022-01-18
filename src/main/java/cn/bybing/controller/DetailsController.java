@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>
@@ -43,6 +40,8 @@ public class DetailsController {
      */
     @GetMapping("/all")
     public ApiResult<Map<String,Object>> getInfo(){
+        //更新最新数据
+        updateDetailsData();
         Map<String, Object> map = new HashMap<>();
         List<Details> list = detailsService.list(new LambdaQueryWrapper<Details>().orderByDesc(Details::getConfirmAdd));
         map.put("updateTime",detailsTask.getUpdateTime());
@@ -57,10 +56,24 @@ public class DetailsController {
      */
     @GetMapping("/info")
     public ApiResult<List> getProvinceInfo(@RequestParam("provinceName") String ProvinceName){
+        updateDetailsData();
         LambdaQueryWrapper<Details> wrapper = new LambdaQueryWrapper<Details>()
                 .eq(Details::getProvince, ProvinceName)
                 .orderByDesc(Details::getConfirmAdd);
         List<Details> list = detailsService.list(wrapper);
         return ApiResult.success(list);
+    }
+
+    /*
+    更新每天最新数据并存入数据库
+     */
+    private void updateDetailsData(){
+        Map<String,Details> allDetails = detailsTask.getAllDetails();
+        for(Map.Entry<String,Details> entry:allDetails.entrySet()){
+            String key = entry.getKey();
+            Details details = allDetails.get(key);
+
+            this.detailsService.saveDetails(details);
+        }
     }
 }

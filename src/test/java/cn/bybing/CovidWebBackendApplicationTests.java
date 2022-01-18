@@ -18,8 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -59,9 +59,11 @@ class CovidWebBackendApplicationTests {
     void saveTest(){
         Map<String,Details> allDetails = detailsTask.getAllDetails();
         for(Map.Entry<String,Details> entry:allDetails.entrySet()){
+            Collection<Details> collecton = new ArrayList<>();
             String key = entry.getKey();
             Details details = allDetails.get(key);
-            this.detailsService.saveDetails(details);
+            collecton.add(details);
+            this.detailsService.saveBatch(collecton);
         }
     }
 
