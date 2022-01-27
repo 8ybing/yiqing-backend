@@ -6,6 +6,7 @@ import cn.bybing.entity.Chinatotal;
 import cn.bybing.entity.Details;
 import cn.bybing.mapper.ChinatotalMapper;
 import cn.bybing.service.ChinatotalService;
+import cn.bybing.task.SaveTask;
 import cn.bybing.task.TotalTask;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ import java.util.Map;
  * @since 2022-01-11
  */
 @RestController
-@RequestMapping("/total")
+@RequestMapping(value = "/total",produces = "application/json; charset=utf-8")
 public class ChinatotalController {
 
     @Resource
@@ -37,14 +38,19 @@ public class ChinatotalController {
     private ChinatotalService chinatotalService;
 
     @Resource
-    private ChinatotalMapper chinatotalMapper;
+    private SaveTask saveTask;
+
+
 
     @GetMapping("/all")
     public ApiResult<Map<String, Object>> getAll(){
+        Map<String, Object> map = new HashMap<>();
         Map<String, Chinatotal> all = totalTask.getAll();
         chinatotalService.saveChinatotal(all.get("chinaTotal"));
-        Map<String, Object> map = new HashMap<>();
         List<Chinatotal> list = chinatotalService.list(new LambdaQueryWrapper<Chinatotal>().orderByDesc(Chinatotal::getUpdatetime));
+        if(list.size() == 0){
+            saveTask.updateChinaTotalData();
+        }
         map.put("updateTime",totalTask.getUpdateTime());
         map.put("info",list);
         return ApiResult.success(map);

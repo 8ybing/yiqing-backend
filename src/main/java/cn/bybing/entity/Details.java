@@ -54,6 +54,11 @@ public class Details implements Serializable {
     private Long confirmAdd;
 
     /**
+     * 现有确诊
+     */
+    private Long nowConfirm;
+
+    /**
      * 累计治愈
      */
     private Long heal;

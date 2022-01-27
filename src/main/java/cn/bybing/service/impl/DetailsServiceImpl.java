@@ -10,7 +10,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,24 +31,27 @@ import java.util.UUID;
  * @since 2022-01-11
  */
 @Service
+@Slf4j
 public class DetailsServiceImpl extends ServiceImpl<DetailsMapper, Details> implements DetailsService {
 
+    @Resource
+    private DetailsTask detailsTask;
 
-    public void saveDetails(Details details){
+    public void saveDetails(String updatetime,Details details){
         HashMap<String, Object> map = new HashMap<>();
         map.put("city",details.getCity());
         map.put("province",details.getProvince());
         List<Details> list = this.baseMapper.selectByMap(map);
-
         if(list.size() == 0){
             //数据库中没有数据
             //新增
             this.baseMapper.insert(details);
-        }else{
-            //已有数据，更新数据
+        }else if(updatetime.equals(detailsTask.getUpdateTime())){
+            //已是最新数据，
             this.baseMapper.updateDetails(details);
+        }else{
+            return;
         }
-
     }
 
     @Override

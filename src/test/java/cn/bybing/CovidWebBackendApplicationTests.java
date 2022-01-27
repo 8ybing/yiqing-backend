@@ -11,6 +11,9 @@ import cn.bybing.service.HistoryService;
 import cn.bybing.task.DetailsTask;
 import cn.bybing.task.HistoryTask;
 import cn.bybing.task.TotalTask;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 
 
 @SpringBootTest
+@Ignore
 class CovidWebBackendApplicationTests {
 
     @Resource
@@ -42,6 +46,9 @@ class CovidWebBackendApplicationTests {
 
     @Resource
     private ChinatotalMapper chinatotalMapper;
+
+    @Resource
+    private ChinatotalService chinatotalService;
 
     @Test
     void contextLoads() throws IOException {
@@ -104,6 +111,44 @@ class CovidWebBackendApplicationTests {
         TotalTask totalTask = new TotalTask();
         Map<String, Chinatotal> all = totalTask.getAll();
         chinatotalMapper.insert(all.get("chinaTotal"));
+    }
+
+    @Test
+    void checkupdatetime(){
+        QueryWrapper<Details> wrapper = new QueryWrapper<Details>().select(Details.class, info -> info.getColumn().equals("update_time"));
+        System.out.println(detailsMapper.selectOne(wrapper));
+    }
+
+    @Test
+    void counttest(){
+         int count = detailsService.count();
+        System.out.println(count);
+    }
+
+    @Test
+    void checkupdatetime2(){
+        QueryWrapper<Details> wrapper = new QueryWrapper<Details>().last("limit 1");
+        String updateTime = detailsMapper.selectOne(wrapper).getUpdateTime();
+        System.out.println(updateTime);
+        String s = detailsTask.getUpdateTime().toString();
+        if(updateTime.equals(s)){
+            System.out.println("true");
+        }else{
+            System.out.println("false");
+        }
+    }
+
+    @Test
+    void test5(){
+        LambdaQueryWrapper<Chinatotal> wrapper = new LambdaQueryWrapper<Chinatotal>().orderByDesc(Chinatotal::getUpdatetime).last("limit 1");
+        String updatetime = chinatotalService.getOne(wrapper).getUpdatetime();
+        System.out.println(updatetime);
+    }
+
+    @Test
+    void counttest2(){
+        List<Details> list = detailsService.list(new LambdaQueryWrapper<Details>().ne(Details::getRiskGrade,"null").orderByDesc(Details::getConfirmAdd));
+        System.out.println(list);
     }
 
 }

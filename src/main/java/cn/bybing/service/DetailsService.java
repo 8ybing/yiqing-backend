@@ -17,7 +17,7 @@ import java.util.Map;
 public interface DetailsService extends IService<Details> {
 
     //存储
-    void saveDetails(Details details);
+    void saveDetails(String updatetime,Details details);
 
     //更新
     void updateDetails(Details details);

@@ -50,6 +50,7 @@ public class DetailsTask {
                 JSONObject city = cityList.getJSONObject(CityNum);
                 //获取key为total的数据
                 JSONObject city_total = city.getJSONObject("total");
+                Object city_nowConfirm = city_total.get("nowConfirm");
                 Object city_confirm = city_total.get("confirm");//该城市累计确诊
                 Object city_heal = city_total.get("heal");//该城市累计治愈
                 Object city_dead = city_total.get("dead");//该城市累计死亡
@@ -61,7 +62,9 @@ public class DetailsTask {
                 long city_dead1 = Long.valueOf(String.valueOf(city_dead));
                 String city_RiskGrade1 = String.valueOf(city_RiskGrade);
                 String city_healRate1 = String.valueOf(city_healRate);
+                Long city_nowConfirm1 = Long.valueOf(String.valueOf(city_nowConfirm));
                 details.setConfirm(city_confirm1);//设置该市累计确诊
+                details.setNowConfirm(city_nowConfirm1);//设置现有确诊
                 details.setDead(city_dead1);//设置该市累计死亡
                 details.setHeal(city_heal1);//设置该市累计治愈
                 details.setHealRate(city_healRate1);//该城市治愈率

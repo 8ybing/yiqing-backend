@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 @Slf4j
 public class ChinatotalServiceImpl extends ServiceImpl<ChinatotalMapper, Chinatotal> implements ChinatotalService {
 
-
     @Override
     public void saveChinatotal(Chinatotal chinatotal) {
         Chinatotal one = this.baseMapper.selectOne(new LambdaQueryWrapper<Chinatotal>().eq(Chinatotal::getUpdatetime, chinatotal.getUpdatetime()));
