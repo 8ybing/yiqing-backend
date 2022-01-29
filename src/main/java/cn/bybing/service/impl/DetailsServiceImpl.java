@@ -37,7 +37,8 @@ public class DetailsServiceImpl extends ServiceImpl<DetailsMapper, Details> impl
     @Resource
     private DetailsTask detailsTask;
 
-    public void saveDetails(String updatetime,Details details){
+    @Override
+    public int saveDetails(String updatetime,Details details){
         HashMap<String, Object> map = new HashMap<>();
         map.put("city",details.getCity());
         map.put("province",details.getProvince());
@@ -45,13 +46,13 @@ public class DetailsServiceImpl extends ServiceImpl<DetailsMapper, Details> impl
         if(list.size() == 0){
             //数据库中没有数据
             //新增
+            log.info("数据库中没有数据，正在搜素并存入数据...");
             this.baseMapper.insert(details);
-        }else if(updatetime.equals(detailsTask.getUpdateTime())){
-            //已是最新数据，
-            this.baseMapper.updateDetails(details);
-        }else{
-            return;
+            return 1;
         }
+        log.info("正在更新数据...");
+        this.baseMapper.updateDetails(details);
+        return 1;
     }
 
     @Override

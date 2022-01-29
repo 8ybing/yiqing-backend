@@ -19,7 +19,7 @@ import java.util.Scanner;
  *
  * @Author: Jhonny
  * @Date: 2022/01/11/15:08
- * @Description:
+ * @Description: 代码自动生成器
  */
 public class CodeGenerator {
 

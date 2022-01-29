@@ -3,6 +3,7 @@ package cn.bybing;
 import cn.bybing.entity.Chinatotal;
 import cn.bybing.entity.Details;
 import cn.bybing.entity.History;
+import cn.bybing.entity.dto.ProvinceDetails;
 import cn.bybing.mapper.ChinatotalMapper;
 import cn.bybing.mapper.DetailsMapper;
 import cn.bybing.service.ChinatotalService;
@@ -11,6 +12,11 @@ import cn.bybing.service.HistoryService;
 import cn.bybing.task.DetailsTask;
 import cn.bybing.task.HistoryTask;
 import cn.bybing.task.TotalTask;
+import cn.hutool.extra.pinyin.PinyinUtil;
+import cn.hutool.extra.pinyin.engine.tinypinyin.TinyPinyinEngine;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jdk.nashorn.internal.ir.annotations.Ignore;
@@ -149,6 +155,26 @@ class CovidWebBackendApplicationTests {
     void counttest2(){
         List<Details> list = detailsService.list(new LambdaQueryWrapper<Details>().ne(Details::getRiskGrade,"null").orderByDesc(Details::getConfirmAdd));
         System.out.println(list);
+    }
+
+    @Test
+    void testpinyin(){
+        Map<String, ProvinceDetails> provinceDetails = detailsTask.getProvinceDetails();
+        List<ProvinceDetails> list = new ArrayList<>();
+        for(Map.Entry<String, ProvinceDetails> entry:provinceDetails.entrySet()){
+            list.add(entry.getValue());
+        }
+        System.out.println(list);
+    }
+
+    @Test
+    void testcompare(){
+        String url_compare = HttpUtil.get("https://view.inews.qq.com/g2/getOnsInfo?name=disease_other");
+        JSONObject jsonObject_compare = JSON.parseObject(url_compare);
+        //获取key为data的json对象
+        JSONObject data_compare = jsonObject_compare.getJSONObject("data");
+        JSONObject provinceCompare = data_compare.getJSONObject("provinceCompare");
+        System.out.println(provinceCompare.get("浙江"));
     }
 
 }

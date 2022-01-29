@@ -50,8 +50,8 @@ public class SaveTask implements ApplicationListener<ContextRefreshedEvent> {
     /*
       更新每天最新数据并存入数据库
     */
-    @Scheduled(cron = "0 0/10 * * * ? ")
-    public void updateDetailsData(){
+    @Scheduled(cron = "0 0/15 * * * ? ")
+    public int updateDetailsData(){
         Map<String,Details> allDetails = detailsTask.getAllDetails();;      
         //最新数据更新时间
         LambdaQueryWrapper<Chinatotal> wrapper = new LambdaQueryWrapper<Chinatotal>().orderByDesc(Chinatotal::getUpdatetime).last("limit 1");
@@ -63,6 +63,7 @@ public class SaveTask implements ApplicationListener<ContextRefreshedEvent> {
             this.detailsService.saveDetails(updatetime,details);
         }
         log.info("更新details表数据完成");
+        return 1;
     }
 
     /**

@@ -18,6 +18,7 @@
         set update_time=#{updateTime},
         confirm=#{confirm},
         confirm_add=#{confirmAdd},
+        now_confirm=#{nowConfirm},
         heal=#{heal},
         dead=#{dead}
         where province=#{province}

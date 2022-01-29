@@ -3,6 +3,7 @@ package cn.bybing.controller;
 
 import cn.bybing.api.ApiResult;
 import cn.bybing.entity.Details;
+import cn.bybing.entity.dto.ProvinceDetails;
 import cn.bybing.service.DetailsService;
 import cn.bybing.task.DetailsTask;
 import cn.bybing.task.SaveTask;
@@ -24,6 +25,7 @@ import java.util.*;
 /**
  * <p>
  *  前端控制器
+ *  城/区/市数据详情信息
  * </p>
  *
  * @author jhonny
@@ -66,35 +68,46 @@ public class DetailsController {
      * @return
      */
     @GetMapping("/info")
-    public ApiResult<List> getProvinceInfo(@RequestParam(value = "provinceName",defaultValue = "北京") String ProvinceName){
+    public ApiResult<HashMap<String,Object>> findProvinceInfoByName(@RequestParam(value = "provinceName",defaultValue = "北京") String ProvinceName){
+        HashMap<String, Object> map = new HashMap<>();
         LambdaQueryWrapper<Details> wrapper = new LambdaQueryWrapper<Details>()
                 .eq(Details::getProvince, ProvinceName)
                 .orderByDesc(Details::getConfirmAdd);
+        Map<String, ProvinceDetails> provinceDetails = detailsTask.getProvinceDetails();
+        map.put("provinceData",provinceDetails.get(ProvinceName));
         List<Details> list = detailsService.list(wrapper);
         if(list.size() == 0){
             saveTask.updateDetailsData();
             return ApiResult.failed("查询失败！");
         }
+        map.put("citydata",list);
+        return ApiResult.success(map);
+    }
+
+    /**
+     * 返回省数据
+     * @return
+     */
+    @GetMapping("/provinceData")
+    public ApiResult<List<ProvinceDetails>> getProvinceInfo(){
+        Map<String, ProvinceDetails> provinceDetails = detailsTask.getProvinceDetails();
+        List<ProvinceDetails> list = new ArrayList<>();
+        for(Map.Entry<String, ProvinceDetails> entry:provinceDetails.entrySet()){
+            list.add(entry.getValue());
+        }
         return ApiResult.success(list);
     }
 
-    /*
-    更新每天最新数据并存入数据库
+    /**
+     * 若系统没有及时更新数据，可手动更新
+     * @return
      */
-//    @Scheduled(cron = "0 0 * * * *")
-//    private void updateDetailsData(){
-//        HashMap<String, Object> map = new HashMap<>();
-//        Map<String,Details> allDetails = detailsTask.getAllDetails();
-//        Object updateTime = detailsTask.getUpdateTime();
-//        //库中有多少条数据
-//        int dataCount = detailsService.count();
-//        map.put("count",dataCount);
-//        //最新数据更新时间
-//        map.put("update_time",updateTime);
-//        for(Map.Entry<String,Details> entry:allDetails.entrySet()){
-//            String key = entry.getKey();
-//            Details details = allDetails.get(key);
-//            this.detailsService.saveDetails(map,details);
-//        }
-//    }
+    @GetMapping("/update")
+    public ApiResult<String> updateDetails(){
+        int i = saveTask.updateDetailsData();
+        if(i == 1){
+            return ApiResult.success("数据更新完成");
+        }
+        return ApiResult.failed("数据更新异常");
+    }
 }

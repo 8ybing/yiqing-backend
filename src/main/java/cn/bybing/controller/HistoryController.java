@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  每日数据
+ *  每日历史数据
  *
  * </p>
  *
